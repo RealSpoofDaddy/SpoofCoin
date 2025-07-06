@@ -23,7 +23,7 @@ void SetupChainParamsBaseOptions(ArgsManager& argsman)
     argsman.AddArg("-signet", "Use the signet chain. Equivalent to -chain=signet. Note that the network is defined by the -signetchallenge parameter", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-signetchallenge", "Blocks must satisfy the given script to be considered valid (only for signet networks; defaults to the global default signet test network challenge)", ArgsManager::ALLOW_ANY | ArgsManager::DISALLOW_NEGATION, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-signetseednode", "Specify a seed node for the signet network, in the hostname[:port] format, e.g. sig.net:1234 (may be used multiple times to specify multiple seed nodes; defaults to the global default signet test network seed node(s))", ArgsManager::ALLOW_ANY | ArgsManager::DISALLOW_NEGATION, OptionsCategory::CHAINPARAMS);
-    argsman.AddArg("-customcoin", "Use the CustomCoin chain. Equivalent to -chain=customcoin. This is a custom cryptocurrency based on Bitcoin Core.", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
+    argsman.AddArg("-spoofcoin", "Use the SpoofCoin chain. Equivalent to -chain=spoofcoin. This is an advanced cryptocurrency based on Bitcoin Core with enhanced security and mining.", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
 }
 
 static std::unique_ptr<CBaseChainParams> globalChainBaseParams;
@@ -51,8 +51,8 @@ std::unique_ptr<CBaseChainParams> CreateBaseChainParams(const ChainType chain)
         return std::make_unique<CBaseChainParams>("signet", 38332);
     case ChainType::REGTEST:
         return std::make_unique<CBaseChainParams>("regtest", 18443);
-    case ChainType::CUSTOMCOIN:
-        return std::make_unique<CBaseChainParams>("customcoin", 19332);
+    case ChainType::SPOOFCOIN:
+        return std::make_unique<CBaseChainParams>("spoofcoin", 19332);
     }
     assert(false);
 }

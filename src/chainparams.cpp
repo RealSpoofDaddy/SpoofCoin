@@ -132,8 +132,8 @@ std::unique_ptr<const CChainParams> CreateChainParams(const ArgsManager& args, c
         ReadRegTestArgs(args, opts);
         return CChainParams::RegTest(opts);
     }
-    case ChainType::CUSTOMCOIN:
-        return CChainParams::CustomCoin();
+    case ChainType::SPOOFCOIN:
+        return CChainParams::SpoofCoin();
     }
     assert(false);
 }

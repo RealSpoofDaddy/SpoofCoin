@@ -629,17 +629,17 @@ public:
 };
 
 /**
- * CustomCoin: An Enhanced Cryptocurrency based on Bitcoin Core
- * Features: Faster blocks, enhanced security, custom economics, modern features
+ * SpoofCoin: An Advanced Cryptocurrency based on Bitcoin Core
+ * Features: Enhanced security, custom economics, built-in mining, modern features
  */
-class CCustomCoinParams : public CChainParams {
+class CSpoofCoinParams : public CChainParams {
 public:
-    CCustomCoinParams() {
-        m_chain_type = ChainType::CUSTOMCOIN;
+    CSpoofCoinParams() {
+        m_chain_type = ChainType::SPOOFCOIN;
         consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
         
-        // Enhanced Economic Parameters
+        // Enhanced Economic Parameters with Dynamic Rewards
         consensus.nSubsidyHalvingInterval = 100000; // Half every 100k blocks (faster than Bitcoin)
         
         // Enhanced Security - All modern features active from genesis
@@ -679,10 +679,10 @@ public:
         consensus.defaultAssumeValid = uint256{};
 
         /**
-         * Enhanced CustomCoin Network Configuration
+         * Enhanced SpoofCoin Network Configuration
          * Using unique identifiers to avoid conflicts
          */
-        pchMessageStart[0] = 0xcc; // CustomCoin
+        pchMessageStart[0] = 0xcc; // SpoofCoin
         pchMessageStart[1] = 0x01; // Enhanced
         pchMessageStart[2] = 0x23; // Version
         pchMessageStart[3] = 0x45; // Magic
@@ -701,19 +701,19 @@ public:
         // Enhanced Network Seeds
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.emplace_back("seed1.customcoin.network.");
-        vSeeds.emplace_back("seed2.customcoin.network.");
-        vSeeds.emplace_back("seed3.customcoin.network.");
-        vSeeds.emplace_back("seed4.customcoin.network.");
+        vSeeds.emplace_back("seed1.spoofcoin.network.");
+        vSeeds.emplace_back("seed2.spoofcoin.network.");
+        vSeeds.emplace_back("seed3.spoofcoin.network.");
+        vSeeds.emplace_back("seed4.spoofcoin.network.");
 
         // Enhanced Address Prefixes - Better visual distinction
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,28);  // 'C' addresses (starts with C)
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);  // 'c' addresses (starts with c)
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,28);  // 'S' addresses (starts with S)
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);  // 's' addresses (starts with s)
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,176); // Private key format
-        base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xC2, 0x1E}; // ccpub for extended public keys
-        base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xCD, 0xE4}; // ccprv for extended private keys
+        base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xC2, 0x1E}; // scpub for extended public keys
+        base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xCD, 0xE4}; // scprv for extended private keys
 
-        bech32_hrp = "cc"; // CustomCoin bech32 prefix
+        bech32_hrp = "sc"; // SpoofCoin bech32 prefix
 
         vFixedSeeds = std::vector<uint8_t>(); // Will be populated with actual seed nodes
 
@@ -761,9 +761,9 @@ std::unique_ptr<const CChainParams> CChainParams::TestNet4()
     return std::make_unique<const CTestNet4Params>();
 }
 
-std::unique_ptr<const CChainParams> CChainParams::CustomCoin()
+std::unique_ptr<const CChainParams> CChainParams::SpoofCoin()
 {
-    return std::make_unique<const CCustomCoinParams>();
+    return std::make_unique<const CSpoofCoinParams>();
 }
 
 std::vector<int> CChainParams::GetAvailableSnapshotHeights() const
@@ -784,7 +784,7 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
     const auto testnet4_msg = CChainParams::TestNet4()->MessageStart();
     const auto regtest_msg = CChainParams::RegTest({})->MessageStart();
     const auto signet_msg = CChainParams::SigNet({})->MessageStart();
-    const auto customcoin_msg = CChainParams::CustomCoin()->MessageStart();
+    const auto spoofcoin_msg = CChainParams::SpoofCoin()->MessageStart();
 
     if (std::ranges::equal(message, mainnet_msg)) {
         return ChainType::MAIN;
@@ -796,8 +796,8 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
         return ChainType::REGTEST;
     } else if (std::ranges::equal(message, signet_msg)) {
         return ChainType::SIGNET;
-    } else if (std::ranges::equal(message, customcoin_msg)) {
-        return ChainType::CUSTOMCOIN;
+    } else if (std::ranges::equal(message, spoofcoin_msg)) {
+        return ChainType::SPOOFCOIN;
     }
     return std::nullopt;
 }

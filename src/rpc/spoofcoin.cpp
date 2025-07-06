@@ -13,19 +13,19 @@
 using node::BlockManager;
 
 /**
- * CustomCoin-specific RPC commands
+ * SpoofCoin-specific RPC commands
  */
 
-static RPCHelpMan getcustomcoininfo()
+static RPCHelpMan getspoofcoininfo()
 {
-    return RPCHelpMan{"getcustomcoininfo",
-        "\nReturns information about CustomCoin network and parameters.\n",
+    return RPCHelpMan{"getspoofcoininfo",
+        "\nReturns information about SpoofCoin network and parameters.\n",
         {},
         RPCResult{
             RPCResult::Type::OBJ, "", "",
             {
-                {RPCResult::Type::STR, "chain", "current network name (customcoin)"},
-                {RPCResult::Type::STR, "version", "CustomCoin version"},
+                {RPCResult::Type::STR, "chain", "current network name (spoofcoin)"},
+                {RPCResult::Type::STR, "version", "SpoofCoin version"},
                 {RPCResult::Type::NUM, "blocktime", "target block time in seconds"},
                 {RPCResult::Type::NUM, "halvinginterval", "blocks between halvings"},
                 {RPCResult::Type::NUM, "port", "default network port"},
@@ -36,21 +36,21 @@ static RPCHelpMan getcustomcoininfo()
             }
         },
         RPCExamples{
-            HelpExampleCli("getcustomcoininfo", "")
-            + HelpExampleRpc("getcustomcoininfo", "")
+            HelpExampleCli("getspoofcoininfo", "")
+            + HelpExampleRpc("getspoofcoininfo", "")
         },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
         {
             const CChainParams& chainparams = Params();
             
             UniValue obj(UniValue::VOBJ);
-            obj.pushKV("chain", "customcoin");
-            obj.pushKV("version", "1.0.0-enhanced");
+            obj.pushKV("chain", "spoofcoin");
+            obj.pushKV("version", "2.0.0-advanced");
             obj.pushKV("blocktime", chainparams.GetConsensus().nPowTargetSpacing);
             obj.pushKV("halvinginterval", (uint64_t)chainparams.GetConsensus().nSubsidyHalvingInterval);
             obj.pushKV("port", chainparams.GetDefaultPort());
             obj.pushKV("bech32prefix", chainparams.Bech32HRP());
-            obj.pushKV("genesismessage", "29/Jan/2025 CustomCoin Enhanced: The Future of Decentralized Finance - Built for Speed, Security, and Scalability");
+            obj.pushKV("genesismessage", "29/Jan/2025 SpoofCoin Advanced: The Future of Secure Cryptocurrency - Built for Speed, Security, and Advanced Mining");
             obj.pushKV("taproot", chainparams.GetConsensus().SegwitHeight == 0);
             obj.pushKV("segwit", chainparams.GetConsensus().SegwitHeight == 0);
             
@@ -59,10 +59,10 @@ static RPCHelpMan getcustomcoininfo()
     };
 }
 
-static RPCHelpMan getcustomcoinaddress()
+static RPCHelpMan getspoofcoinaddress()
 {
-    return RPCHelpMan{"getcustomcoinaddress",
-        "\nGenerates a new CustomCoin address with proper formatting.\n",
+    return RPCHelpMan{"getspoofcoinaddress",
+        "\nGenerates a new SpoofCoin address with proper formatting.\n",
         {
             {"address_type", RPCArg::Type::STR, RPCArg::Default{"bech32"}, "Address type (legacy, p2sh-segwit, bech32)"},
         },
@@ -76,9 +76,9 @@ static RPCHelpMan getcustomcoinaddress()
             }
         },
         RPCExamples{
-            HelpExampleCli("getcustomcoinaddress", "")
-            + HelpExampleCli("getcustomcoinaddress", "\"bech32\"")
-            + HelpExampleRpc("getcustomcoinaddress", "\"legacy\"")
+            HelpExampleCli("getspoofcoinaddress", "")
+            + HelpExampleCli("getspoofcoinaddress", "\"bech32\"")
+            + HelpExampleRpc("getspoofcoinaddress", "\"legacy\"")
         },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
         {
@@ -89,18 +89,18 @@ static RPCHelpMan getcustomcoinaddress()
             
             UniValue obj(UniValue::VOBJ);
             obj.pushKV("type", address_type);
-            obj.pushKV("prefix", address_type == "bech32" ? "cc" : "C");
-            obj.pushKV("info", "CustomCoin address generation - use wallet RPC commands for actual address creation");
+            obj.pushKV("prefix", address_type == "bech32" ? "sc" : "S");
+            obj.pushKV("info", "SpoofCoin address generation - use wallet RPC commands for actual address creation");
             
             return obj;
         },
     };
 }
 
-static RPCHelpMan getcustomcoinstats()
+static RPCHelpMan getspoofcoinstats()
 {
-    return RPCHelpMan{"getcustomcoinstats",
-        "\nReturns advanced statistics about the CustomCoin network.\n",
+    return RPCHelpMan{"getspoofcoinstats",
+        "\nReturns advanced statistics about the SpoofCoin network.\n",
         {},
         RPCResult{
             RPCResult::Type::OBJ, "", "",
@@ -115,33 +115,33 @@ static RPCHelpMan getcustomcoinstats()
             }
         },
         RPCExamples{
-            HelpExampleCli("getcustomcoinstats", "")
-            + HelpExampleRpc("getcustomcoinstats", "")
+            HelpExampleCli("getspoofcoinstats", "")
+            + HelpExampleRpc("getspoofcoinstats", "")
         },
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
         {
             const CChainParams& chainparams = Params();
             
             UniValue obj(UniValue::VOBJ);
-            obj.pushKV("info", "CustomCoin Enhanced Statistics");
-            obj.pushKV("chain", "customcoin");
+            obj.pushKV("info", "SpoofCoin Advanced Statistics");
+            obj.pushKV("chain", "spoofcoin");
             obj.pushKV("blocktime", chainparams.GetConsensus().nPowTargetSpacing);
             obj.pushKV("halvinginterval", (uint64_t)chainparams.GetConsensus().nSubsidyHalvingInterval);
-            obj.pushKV("startingsubsidy", "25 CustomCoin");
-            obj.pushKV("features", "Taproot, SegWit, Enhanced Security from Genesis");
+            obj.pushKV("startingsubsidy", "50 SpoofCoin");
+            obj.pushKV("features", "Taproot, SegWit, Enhanced Security, Built-in Mining from Genesis");
             
             return obj;
         },
     };
 }
 
-void RegisterCustomCoinRPCCommands(CRPCTable &t)
+void RegisterSpoofCoinRPCCommands(CRPCTable &t)
 {
     static const CRPCCommand commands[] =
     {
-        {"customcoin", &getcustomcoininfo},
-        {"customcoin", &getcustomcoinaddress},
-        {"customcoin", &getcustomcoinstats},
+        {"spoofcoin", &getspoofcoininfo},
+        {"spoofcoin", &getspoofcoinaddress},
+        {"spoofcoin", &getspoofcoinstats},
     };
     
     for (const auto& c : commands) {

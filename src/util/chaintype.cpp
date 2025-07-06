@@ -21,8 +21,8 @@ std::string ChainTypeToString(ChainType chain)
         return "signet";
     case ChainType::REGTEST:
         return "regtest";
-    case ChainType::CUSTOMCOIN:
-        return "customcoin";
+    case ChainType::SPOOFCOIN:
+        return "spoofcoin";
     }
     assert(false);
 }
@@ -39,8 +39,8 @@ std::optional<ChainType> ChainTypeFromString(std::string_view chain)
         return ChainType::SIGNET;
     } else if (chain == "regtest") {
         return ChainType::REGTEST;
-    } else if (chain == "customcoin") {
-        return ChainType::CUSTOMCOIN;
+    } else if (chain == "spoofcoin") {
+        return ChainType::SPOOFCOIN;
     } else {
         return std::nullopt;
     }

@@ -435,8 +435,8 @@ private:
             return " signet";
         case ChainType::REGTEST:
             return " regtest";
-        case ChainType::CUSTOMCOIN:
-            return " customcoin";
+        case ChainType::SPOOFCOIN:
+            return " spoofcoin";
         case ChainType::MAIN:
             return "";
         }
