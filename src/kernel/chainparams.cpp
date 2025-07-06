@@ -628,6 +628,96 @@ public:
     }
 };
 
+/**
+ * CustomCoin: A custom cryptocurrency based on Bitcoin Core
+ */
+class CCustomCoinParams : public CChainParams {
+public:
+    CCustomCoinParams() {
+        m_chain_type = ChainType::CUSTOMCOIN;
+        consensus.signet_blocks = false;
+        consensus.signet_challenge.clear();
+        consensus.nSubsidyHalvingInterval = 100000; // Half every 100k blocks instead of 210k
+        consensus.BIP34Height = 1;
+        consensus.BIP34Hash = uint256{};
+        consensus.BIP65Height = 1;
+        consensus.BIP66Height = 1;
+        consensus.CSVHeight = 1;
+        consensus.SegwitHeight = 1;
+        consensus.MinBIP9WarningHeight = 0;
+        consensus.powLimit = uint256{"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
+        consensus.nPowTargetTimespan = 7 * 24 * 60 * 60; // 1 week instead of 2 weeks
+        consensus.nPowTargetSpacing = 2.5 * 60; // 2.5 minutes instead of 10 minutes
+        consensus.fPowAllowMinDifficultyBlocks = true;
+        consensus.enforce_BIP94 = false;
+        consensus.fPowNoRetargeting = false;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = Consensus::BIP9Deployment::NEVER_ACTIVE;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].min_activation_height = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].threshold = 1815; // 90%
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].period = 2016;
+
+        // Deployment of Taproot (BIPs 340-342) - Active from genesis
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].bit = 2;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].threshold = 1815; // 90%
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].period = 2016;
+
+        consensus.nMinimumChainWork = uint256{};
+        consensus.defaultAssumeValid = uint256{};
+
+        /**
+         * Custom message start for CustomCoin network
+         * Using unique bytes to avoid conflicts with other networks
+         */
+        pchMessageStart[0] = 0xcc; // Custom
+        pchMessageStart[1] = 0x01; // Coin
+        pchMessageStart[2] = 0x23; // Network
+        pchMessageStart[3] = 0x45; // Magic
+        nDefaultPort = 19333; // Custom port
+        nPruneAfterHeight = 1000;
+        m_assumed_blockchain_size = 1;
+        m_assumed_chain_state_size = 1;
+
+        // Use the same genesis block as regtest for now (we can customize later)
+        genesis = CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 50 * COIN);
+        consensus.hashGenesisBlock = genesis.GetHash();
+        assert(consensus.hashGenesisBlock == uint256{"0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"});
+        assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
+
+        vFixedSeeds.clear();
+        vSeeds.clear();
+        // Add your custom seed nodes here
+        vSeeds.emplace_back("seed1.customcoin.example.com.");
+        vSeeds.emplace_back("seed2.customcoin.example.com.");
+
+        // Custom address prefixes
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,60);  // 'C' prefix
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,85);  // 'c' prefix  
+        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,188); // Different from Bitcoin
+        base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xC2, 0x1E}; // Custom extended key prefixes
+        base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xCD, 0xE4}; // Custom extended key prefixes
+
+        bech32_hrp = "cc"; // CustomCoin bech32 prefix
+
+        vFixedSeeds = std::vector<uint8_t>(); // Empty for now
+
+        fDefaultConsistencyChecks = false;
+        m_is_mockable_chain = false;
+
+        m_assumeutxo_data = {};
+
+        chainTxData = ChainTxData{
+            .nTime = 1737933600,  // Genesis time
+            .tx_count = 1,        // Just genesis transaction
+            .dTxRate = 0.1,       // Estimated transactions per second
+        };
+    }
+};
+
 std::unique_ptr<const CChainParams> CChainParams::SigNet(const SigNetOptions& options)
 {
     return std::make_unique<const SigNetParams>(options);
@@ -653,6 +743,11 @@ std::unique_ptr<const CChainParams> CChainParams::TestNet4()
     return std::make_unique<const CTestNet4Params>();
 }
 
+std::unique_ptr<const CChainParams> CChainParams::CustomCoin()
+{
+    return std::make_unique<const CCustomCoinParams>();
+}
+
 std::vector<int> CChainParams::GetAvailableSnapshotHeights() const
 {
     std::vector<int> heights;
@@ -671,6 +766,7 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
     const auto testnet4_msg = CChainParams::TestNet4()->MessageStart();
     const auto regtest_msg = CChainParams::RegTest({})->MessageStart();
     const auto signet_msg = CChainParams::SigNet({})->MessageStart();
+    const auto customcoin_msg = CChainParams::CustomCoin()->MessageStart();
 
     if (std::ranges::equal(message, mainnet_msg)) {
         return ChainType::MAIN;
@@ -682,6 +778,8 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
         return ChainType::REGTEST;
     } else if (std::ranges::equal(message, signet_msg)) {
         return ChainType::SIGNET;
+    } else if (std::ranges::equal(message, customcoin_msg)) {
+        return ChainType::CUSTOMCOIN;
     }
     return std::nullopt;
 }
