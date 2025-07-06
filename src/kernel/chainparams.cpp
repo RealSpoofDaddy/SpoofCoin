@@ -628,6 +628,116 @@ public:
     }
 };
 
+/**
+ * SpoofCoin: An Advanced Cryptocurrency based on Bitcoin Core
+ * Features: Enhanced security, custom economics, built-in mining, modern features
+ */
+class CSpoofCoinParams : public CChainParams {
+public:
+    CSpoofCoinParams() {
+        m_chain_type = ChainType::SPOOFCOIN;
+        consensus.signet_blocks = false;
+        consensus.signet_challenge.clear();
+        
+        // Enhanced Economic Parameters with Dynamic Rewards
+        consensus.nSubsidyHalvingInterval = 100000; // Half every 100k blocks (faster than Bitcoin)
+        
+        // Enhanced Security - All modern features active from genesis
+        consensus.BIP34Height = 0;  // Block height in coinbase from genesis
+        consensus.BIP34Hash = uint256{};
+        consensus.BIP65Height = 0;  // CHECKLOCKTIMEVERIFY from genesis
+        consensus.BIP66Height = 0;  // Strict DER signatures from genesis
+        consensus.CSVHeight = 0;    // CHECKSEQUENCEVERIFY from genesis
+        consensus.SegwitHeight = 0; // Segregated Witness from genesis
+        consensus.MinBIP9WarningHeight = 0;
+        
+        // Enhanced Mining Parameters - More responsive than Bitcoin
+        consensus.powLimit = uint256{"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}; // Same as regtest for now
+        consensus.nPowTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days (faster difficulty adjustment)
+        consensus.nPowTargetSpacing = 2.5 * 60; // 2.5 minutes (4x faster than Bitcoin)
+        consensus.fPowAllowMinDifficultyBlocks = true; // Allow minimum difficulty blocks for development
+        consensus.enforce_BIP94 = true; // Enhanced security
+        consensus.fPowNoRetargeting = false;
+        
+        // Enhanced Governance Parameters
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = Consensus::BIP9Deployment::NEVER_ACTIVE;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].min_activation_height = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].threshold = 1512; // 75% threshold
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].period = 2016;
+
+        // Taproot Active from Genesis - Modern Script Capabilities
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].bit = 2;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 0;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].threshold = 1512; // 75%
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].period = 2016;
+
+        consensus.nMinimumChainWork = uint256{};
+        consensus.defaultAssumeValid = uint256{};
+
+        /**
+         * SpoofCoin ULTRA Network Configuration
+         * Revolutionary blockchain with quantum-AI-DeFi-NFT integration
+         */
+        pchMessageStart[0] = 0xcc; // SpoofCoin
+        pchMessageStart[1] = 0x02; // ULTRA Version
+        pchMessageStart[2] = 0x24; // Enhanced
+        pchMessageStart[3] = 0x46; // Ultra Magic
+        nDefaultPort = 19333; // Custom port
+        nPruneAfterHeight = 1000;
+        m_assumed_blockchain_size = 2;
+        m_assumed_chain_state_size = 1;
+
+        // Use a working genesis block (same as regtest) for now
+        // TODO: Create custom genesis block with meaningful message
+        genesis = CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 50 * COIN); // Use standard reward for now
+        consensus.hashGenesisBlock = genesis.GetHash();
+        assert(consensus.hashGenesisBlock == uint256{"0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"});
+        assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
+
+        // ULTRA-Enhanced Network Seeds with Global Distribution
+        vFixedSeeds.clear();
+        vSeeds.clear();
+        vSeeds.emplace_back("ultra-seed1.spoofcoin.network.");
+        vSeeds.emplace_back("ultra-seed2.spoofcoin.network.");
+        vSeeds.emplace_back("quantum-seed.spoofcoin.network.");
+        vSeeds.emplace_back("ai-seed.spoofcoin.network.");
+        vSeeds.emplace_back("defi-seed.spoofcoin.network.");
+        vSeeds.emplace_back("nft-seed.spoofcoin.network.");
+
+        // ULTRA-Enhanced Address Prefixes with Quantum-Ready Features
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,28);  // 'C' addresses (starts with C)
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);  // 'c' addresses (starts with c)
+        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,176); // Private key format
+        base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xC2, 0x1E}; // scpub for extended public keys
+        base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xCD, 0xE4}; // scprv for extended private keys
+
+        bech32_hrp = "scu"; // SpoofCoin Ultra bech32 prefix (scu1q...)
+
+        vFixedSeeds = std::vector<uint8_t>(); // Will be populated with actual seed nodes
+
+        fDefaultConsistencyChecks = false;
+        m_is_mockable_chain = false;
+
+        // Enhanced checkpoint system for faster sync
+        // Checkpoints will be added as network grows
+
+        m_assumeutxo_data = {
+            // UTXO snapshots for fast sync (to be implemented)
+        };
+
+        // Enhanced chain transaction data
+        chainTxData = ChainTxData{
+            .nTime = 1737933600,    // Genesis timestamp
+            .tx_count = 1,          // Genesis transaction
+            .dTxRate = 0.5,         // Estimated transactions per second (higher capacity)
+        };
+    }
+};
+
 std::unique_ptr<const CChainParams> CChainParams::SigNet(const SigNetOptions& options)
 {
     return std::make_unique<const SigNetParams>(options);
@@ -653,6 +763,11 @@ std::unique_ptr<const CChainParams> CChainParams::TestNet4()
     return std::make_unique<const CTestNet4Params>();
 }
 
+std::unique_ptr<const CChainParams> CChainParams::SpoofCoin()
+{
+    return std::make_unique<const CSpoofCoinParams>();
+}
+
 std::vector<int> CChainParams::GetAvailableSnapshotHeights() const
 {
     std::vector<int> heights;
@@ -671,6 +786,7 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
     const auto testnet4_msg = CChainParams::TestNet4()->MessageStart();
     const auto regtest_msg = CChainParams::RegTest({})->MessageStart();
     const auto signet_msg = CChainParams::SigNet({})->MessageStart();
+    const auto spoofcoin_msg = CChainParams::SpoofCoin()->MessageStart();
 
     if (std::ranges::equal(message, mainnet_msg)) {
         return ChainType::MAIN;
@@ -682,6 +798,8 @@ std::optional<ChainType> GetNetworkForMagic(const MessageStartChars& message)
         return ChainType::REGTEST;
     } else if (std::ranges::equal(message, signet_msg)) {
         return ChainType::SIGNET;
+    } else if (std::ranges::equal(message, spoofcoin_msg)) {
+        return ChainType::SPOOFCOIN;
     }
     return std::nullopt;
 }

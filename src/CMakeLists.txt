@@ -290,7 +290,14 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   policy/truc_policy.cpp
   rest.cpp
   rpc/blockchain.cpp
+  rpc/spoofcoin.cpp
+  rpc/ultra.cpp
   rpc/external_signer.cpp
+  spoofcoin/miner.cpp
+  spoofcoin/security.cpp
+  spoofcoin/quantum.cpp
+  spoofcoin/defi.cpp
+  spoofcoin/nft.cpp
   rpc/fees.cpp
   rpc/mempool.cpp
   rpc/mining.cpp
@@ -440,6 +447,18 @@ if(BUILD_UTIL)
   )
   install_binary_component(bitcoin-util HAS_MANPAGE)
 endif()
+
+# SpoofCoin Advanced Miner
+add_executable(spoofcoin-miner spoofcoin-miner.cpp)
+add_windows_resources(spoofcoin-miner spoofcoin-miner-res.rc)
+add_windows_application_manifest(spoofcoin-miner)
+target_link_libraries(spoofcoin-miner
+  core_interface
+  bitcoin_node
+  bitcoin_common
+  bitcoin_util
+)
+install_binary_component(spoofcoin-miner)
 
 
 if(BUILD_GUI)
