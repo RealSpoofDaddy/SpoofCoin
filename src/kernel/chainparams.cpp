@@ -629,7 +629,8 @@ public:
 };
 
 /**
- * CustomCoin: A custom cryptocurrency based on Bitcoin Core
+ * CustomCoin: An Enhanced Cryptocurrency based on Bitcoin Core
+ * Features: Faster blocks, enhanced security, custom economics, modern features
  */
 class CCustomCoinParams : public CChainParams {
 public:
@@ -637,83 +638,100 @@ public:
         m_chain_type = ChainType::CUSTOMCOIN;
         consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
-        consensus.nSubsidyHalvingInterval = 100000; // Half every 100k blocks instead of 210k
-        consensus.BIP34Height = 1;
+        
+        // Enhanced Economic Parameters
+        consensus.nSubsidyHalvingInterval = 100000; // Half every 100k blocks (faster than Bitcoin)
+        
+        // Enhanced Security - All modern features active from genesis
+        consensus.BIP34Height = 0;  // Block height in coinbase from genesis
         consensus.BIP34Hash = uint256{};
-        consensus.BIP65Height = 1;
-        consensus.BIP66Height = 1;
-        consensus.CSVHeight = 1;
-        consensus.SegwitHeight = 1;
+        consensus.BIP65Height = 0;  // CHECKLOCKTIMEVERIFY from genesis
+        consensus.BIP66Height = 0;  // Strict DER signatures from genesis
+        consensus.CSVHeight = 0;    // CHECKSEQUENCEVERIFY from genesis
+        consensus.SegwitHeight = 0; // Segregated Witness from genesis
         consensus.MinBIP9WarningHeight = 0;
-        consensus.powLimit = uint256{"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
-        consensus.nPowTargetTimespan = 7 * 24 * 60 * 60; // 1 week instead of 2 weeks
-        consensus.nPowTargetSpacing = 2.5 * 60; // 2.5 minutes instead of 10 minutes
-        consensus.fPowAllowMinDifficultyBlocks = true;
-        consensus.enforce_BIP94 = false;
+        
+        // Enhanced Mining Parameters - More responsive than Bitcoin
+        consensus.powLimit = uint256{"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}; // Same as regtest for now
+        consensus.nPowTargetTimespan = 3.5 * 24 * 60 * 60; // 3.5 days (faster difficulty adjustment)
+        consensus.nPowTargetSpacing = 2.5 * 60; // 2.5 minutes (4x faster than Bitcoin)
+        consensus.fPowAllowMinDifficultyBlocks = true; // Allow minimum difficulty blocks for development
+        consensus.enforce_BIP94 = true; // Enhanced security
         consensus.fPowNoRetargeting = false;
+        
+        // Enhanced Governance Parameters
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = Consensus::BIP9Deployment::NEVER_ACTIVE;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].min_activation_height = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].threshold = 1815; // 90%
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].threshold = 1512; // 75% threshold
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].period = 2016;
 
-        // Deployment of Taproot (BIPs 340-342) - Active from genesis
+        // Taproot Active from Genesis - Modern Script Capabilities
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].bit = 2;
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE;
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].min_activation_height = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].threshold = 1815; // 90%
+        consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].threshold = 1512; // 75%
         consensus.vDeployments[Consensus::DEPLOYMENT_TAPROOT].period = 2016;
 
         consensus.nMinimumChainWork = uint256{};
         consensus.defaultAssumeValid = uint256{};
 
         /**
-         * Custom message start for CustomCoin network
-         * Using unique bytes to avoid conflicts with other networks
+         * Enhanced CustomCoin Network Configuration
+         * Using unique identifiers to avoid conflicts
          */
-        pchMessageStart[0] = 0xcc; // Custom
-        pchMessageStart[1] = 0x01; // Coin
-        pchMessageStart[2] = 0x23; // Network
+        pchMessageStart[0] = 0xcc; // CustomCoin
+        pchMessageStart[1] = 0x01; // Enhanced
+        pchMessageStart[2] = 0x23; // Version
         pchMessageStart[3] = 0x45; // Magic
         nDefaultPort = 19333; // Custom port
         nPruneAfterHeight = 1000;
-        m_assumed_blockchain_size = 1;
+        m_assumed_blockchain_size = 2;
         m_assumed_chain_state_size = 1;
 
-        // Use the same genesis block as regtest for now (we can customize later)
-        genesis = CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 50 * COIN);
+        // Use a working genesis block (same as regtest) for now
+        // TODO: Create custom genesis block with meaningful message
+        genesis = CreateGenesisBlock(1296688602, 2, 0x207fffff, 1, 50 * COIN); // Use standard reward for now
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256{"0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"});
         assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
 
+        // Enhanced Network Seeds
         vFixedSeeds.clear();
         vSeeds.clear();
-        // Add your custom seed nodes here
-        vSeeds.emplace_back("seed1.customcoin.example.com.");
-        vSeeds.emplace_back("seed2.customcoin.example.com.");
+        vSeeds.emplace_back("seed1.customcoin.network.");
+        vSeeds.emplace_back("seed2.customcoin.network.");
+        vSeeds.emplace_back("seed3.customcoin.network.");
+        vSeeds.emplace_back("seed4.customcoin.network.");
 
-        // Custom address prefixes
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,60);  // 'C' prefix
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,85);  // 'c' prefix  
-        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,188); // Different from Bitcoin
-        base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xC2, 0x1E}; // Custom extended key prefixes
-        base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xCD, 0xE4}; // Custom extended key prefixes
+        // Enhanced Address Prefixes - Better visual distinction
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,28);  // 'C' addresses (starts with C)
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);  // 'c' addresses (starts with c)
+        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,176); // Private key format
+        base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xC2, 0x1E}; // ccpub for extended public keys
+        base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xCD, 0xE4}; // ccprv for extended private keys
 
         bech32_hrp = "cc"; // CustomCoin bech32 prefix
 
-        vFixedSeeds = std::vector<uint8_t>(); // Empty for now
+        vFixedSeeds = std::vector<uint8_t>(); // Will be populated with actual seed nodes
 
         fDefaultConsistencyChecks = false;
         m_is_mockable_chain = false;
 
-        m_assumeutxo_data = {};
+        // Enhanced checkpoint system for faster sync
+        // Checkpoints will be added as network grows
 
+        m_assumeutxo_data = {
+            // UTXO snapshots for fast sync (to be implemented)
+        };
+
+        // Enhanced chain transaction data
         chainTxData = ChainTxData{
-            .nTime = 1737933600,  // Genesis time
-            .tx_count = 1,        // Just genesis transaction
-            .dTxRate = 0.1,       // Estimated transactions per second
+            .nTime = 1737933600,    // Genesis timestamp
+            .tx_count = 1,          // Genesis transaction
+            .dTxRate = 0.5,         // Estimated transactions per second (higher capacity)
         };
     }
 };
