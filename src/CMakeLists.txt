@@ -291,9 +291,13 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   rest.cpp
   rpc/blockchain.cpp
   rpc/spoofcoin.cpp
+  rpc/ultra.cpp
   rpc/external_signer.cpp
-  spoofcoin/security.cpp
   spoofcoin/miner.cpp
+  spoofcoin/security.cpp
+  spoofcoin/quantum.cpp
+  spoofcoin/defi.cpp
+  spoofcoin/nft.cpp
   rpc/fees.cpp
   rpc/mempool.cpp
   rpc/mining.cpp
